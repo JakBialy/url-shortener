@@ -15,7 +15,7 @@
                 <form th:action="@{/createUrl}" th:object="${urlDto}" method="post">
 
                     <div>
-                        <input class="form-control"  th:field="*{code}" id="text" type="text" name="text" placeholder="Your URL comes here">
+                        <input class="form-control"  th:field="*{url}" id="text" type="text" name="text" placeholder="Your URL comes here">
                         <!--            <p th:if="${#fields.hasErrors('text')}" th:errors="*{text}"> error message</p>-->
                     </div>
 
