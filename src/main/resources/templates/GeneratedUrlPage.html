@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="../static/elements/Header.html :: head" xmlns:th="http://www.w3.org/1999/xhtml"></head>
+<div th:replace="../static/elements/Nav.html :: nav" xmlns:th="http://www.w3.org/1999/xhtml"></div>
+
+<!-- Content Here!!! -->
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12 text-center">
+            <h3 class="mt-5">Success here is your ULR!!</h3>
+            <p th:text="${generatedUrl}"></p>
+        </div>
+    </div>
+</div>
+
+<p class="lead"></p>
+
+<div th:replace="../static/elements/Footer.html :: footer" xmlns:th="http://www.w3.org/1999/xhtml"></div>
+
+</html>
