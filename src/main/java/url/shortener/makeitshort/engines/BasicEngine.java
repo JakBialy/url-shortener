@@ -1,10 +1,12 @@
 package url.shortener.makeitshort.engines;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import url.shortener.makeitshort.models.Url;
 import url.shortener.makeitshort.repositories.UrlRepository;
 
 @Service
+@Slf4j
 public class BasicEngine implements CodingEngine {
 
     private final UrlRepository urlRepository;
@@ -20,6 +22,8 @@ public class BasicEngine implements CodingEngine {
      */
     @Override
     public String generateShorterUrl(String url) {
+        log.info("generateShorterUrl: url - {} was coded", url);
+
         Url newValue = Url.builder()
                 .realUrl(url)
                 .build();
@@ -35,6 +39,7 @@ public class BasicEngine implements CodingEngine {
      */
     @Override
     public String getBackRealUrl(String coded) {
+        log.info("getBackRealUrl: code - {} was used", coded);
         return urlRepository.getOne(Long.valueOf(coded)).getRealUrl();
     }
 }
