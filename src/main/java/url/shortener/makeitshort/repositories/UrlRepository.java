@@ -6,4 +6,6 @@ import url.shortener.makeitshort.models.Url;
 
 @Repository
 public interface UrlRepository extends JpaRepository <Url, Long> {
+
+    Url getUrlByCode(String code);
 }
