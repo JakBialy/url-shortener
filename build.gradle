@@ -1,9 +1,10 @@
 plugins {
-    id 'org.springframework.boot' version '2.1.4.RELEASE'
+    id "org.springframework.boot" version "2.2.0.RELEASE"
     id 'java'
 }
 
 apply plugin: 'io.spring.dependency-management'
+apply plugin: 'scala'
 
 group = 'jakub.budgetapp'
 version = '0.0.1-SNAPSHOT'
@@ -30,7 +31,9 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.3.1'
     testImplementation 'org.junit.jupiter:junit-jupiter-params:5.3.1'
+    testCompile group: 'io.gatling.highcharts', name: 'gatling-charts-highcharts', version: '3.3.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
+    compile 'org.scala-lang:scala-library:2.12.7'
 }
 
 test {
@@ -41,4 +44,22 @@ jar {
     manifest {
         attributes 'Main-Class': 'jakub.budgetapp.budgetapp.BudgetAppApplication'
     }
+}
+
+
+task loadTest(type: JavaExec) {
+    dependsOn testClasses
+    description = "Load Test With Gatling"
+    group = "Load Test"
+    classpath = sourceSets.test.runtimeClasspath
+    jvmArgs = [
+            "-Dgatling.core.directory.binaries=${sourceSets.test.output.getClassesDirs().toString()}"
+    ]
+    main = "io.gatling.app.Gatling"
+    args = [
+            "--simulation", "pl.piomin.services.gatling.ApiGatlingSimulationTest",
+            "--results-folder", "${buildDir}/gatling-results",
+            "--binaries-folder", sourceSets.test.output.getClassesDirs().toString(),
+            "--bodies-folder", sourceSets.test.resources.srcDirs.toList().first().toString() + "/gatling/bodies",
+    ]
 }
