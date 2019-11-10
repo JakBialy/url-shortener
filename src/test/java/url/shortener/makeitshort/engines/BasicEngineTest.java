@@ -2,31 +2,55 @@ package url.shortener.makeitshort.engines;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import url.shortener.makeitshort.models.Url;
+import url.shortener.makeitshort.engines.utilities.UrlUtil;
 import url.shortener.makeitshort.repositories.UrlRepository;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
 
+/**
+ * Test class for
+ * {@link BasicEngine}
+ */
 @DataJpaTest
 class BasicEngineTest {
 
-    private static final String TEST_URL = "www.google.com";
+    private static final String TEST_URL = "https://www.test-url.co.uk/";
+    private static final String TEST_LOCALHOST = "null";
+    private static final String MESSAGE_URL_INVALID = "given URL is not valid! Check your address";
 
     @Autowired
-    UrlRepository urlRepository;
+    private UrlRepository urlRepository;
+
+    @Mock
+    private UrlUtil urlUtil;
 
     private BasicEngine basicEngine;
 
     @BeforeEach
     void setUp() {
-        basicEngine = new BasicEngine(urlRepository);
+        basicEngine = new BasicEngine(urlUtil, urlRepository);
     }
 
+    /**
+     * {@link BasicEngine#generateShorterUrl(String)}
+     */
     @Test
-    void generateShorterUrl() {
-        assertFalse(basicEngine.generateShorterUrl(TEST_URL).isEmpty());
+    void generateShorterUrl_whenUrlIsValid_ShouldReturnCode() {
+        when(urlUtil.checkIfUrlValid(TEST_URL)).thenReturn(true);
+        assertFalse(basicEngine.processUrlToGetCode(TEST_URL).isEmpty());
+    }
+
+    /**
+     * {@link BasicEngine#generateShorterUrl(String)}
+     */
+    @Test
+    void generateShorterUrl_whenUrlIsInvalid_ShouldReturnErrorMessage() {
+        when(urlUtil.checkIfUrlValid(TEST_URL)).thenReturn(false);
+        assertEquals(MESSAGE_URL_INVALID, basicEngine.processUrlToGetCode(TEST_URL));
     }
 
     /**
@@ -34,17 +58,11 @@ class BasicEngineTest {
      */
     @Test
     void getBackRealUrl() {
-        // GIVEN
-        Url newUrl = Url
-                .builder()
-                .realUrl(TEST_URL)
-                .build();
-        urlRepository.save(newUrl);
+        when(urlUtil.checkIfUrlValid(TEST_URL)).thenReturn(true);
+        String code = basicEngine.processUrlToGetCode(TEST_URL);
 
-        // WHEN
-        String realUrl = basicEngine.getBackRealUrl(String.valueOf(newUrl.getId()));
+        String realUrl = basicEngine.getBackRealUrl(code.replace(TEST_LOCALHOST, ""));
 
-        // THEN
-        assertEquals(newUrl.getRealUrl(), realUrl);
+        assertEquals(TEST_URL, realUrl);
     }
 }

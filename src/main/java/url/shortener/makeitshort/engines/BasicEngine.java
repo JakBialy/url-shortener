@@ -2,44 +2,37 @@ package url.shortener.makeitshort.engines;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import url.shortener.makeitshort.engines.abstracts.AbstractEngine;
+import url.shortener.makeitshort.engines.utilities.UrlUtil;
 import url.shortener.makeitshort.models.Url;
 import url.shortener.makeitshort.repositories.UrlRepository;
 
-@Service
+@Service("BasicEngine")
 @Slf4j
-public class BasicEngine implements CodingEngine {
-
+public class BasicEngine extends AbstractEngine implements CodingEngine {
     private final UrlRepository urlRepository;
 
-    public BasicEngine(UrlRepository urlRepository) {
+    public BasicEngine(UrlUtil urlUtil, UrlRepository urlRepository) {
+        super(urlUtil);
         this.urlRepository = urlRepository;
     }
 
-    /**
-     * Very naive implementation where code is based on auto incrementation in database
-     * @param url any String
-     * @return String value of current id
-     */
     @Override
     public String generateShorterUrl(String url) {
-        log.info("generateShorterUrl: url - {} was coded", url);
-
         Url newValue = Url.builder()
                 .realUrl(url)
                 .build();
         urlRepository.save(newValue);
+        newValue.setCode(String.valueOf(newValue.getId()));
+        urlRepository.save(newValue);
 
-        return String.valueOf(newValue.getId());
+        log.info("generateShorterUrl: url - {} was coded", url);
+        return newValue.getCode();
     }
 
-    /**
-     * Getting back stored value by code
-     * @param coded code
-     * @return stored url
-     */
     @Override
-    public String getBackRealUrl(String coded) {
-        log.info("getBackRealUrl: code - {} was used", coded);
-        return urlRepository.getOne(Long.valueOf(coded)).getRealUrl();
+    public String getBackRealUrl(String codedUrl) {
+        log.info("getBackRealUrl: code - {} was used", codedUrl);
+        return urlRepository.getUrlByCode((codedUrl)).getRealUrl();
     }
 }
