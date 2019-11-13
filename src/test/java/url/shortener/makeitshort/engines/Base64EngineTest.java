@@ -5,9 +5,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import url.shortener.makeitshort.engines.implementations.Base64Engine;
 import url.shortener.makeitshort.engines.utilities.Base64;
 import url.shortener.makeitshort.engines.utilities.UrlUtil;
-import url.shortener.makeitshort.models.Url;
 import url.shortener.makeitshort.repositories.UrlRepository;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -39,7 +39,7 @@ class Base64EngineTest {
 
     @BeforeEach
     void setUp() {
-        base64Engine = new Base64Engine(urlUtil, base64, urlRepository);
+        base64Engine = new Base64Engine(urlUtil, urlRepository, base64);
     }
 
     /**
@@ -79,17 +79,4 @@ class Base64EngineTest {
         assertEquals(MESSAGE_URL_INVALID, base64Engine.processUrlToGetCode(TEST_URL));
     }
 
-    /**
-     * {@link Base64Engine#getBackRealUrl(String)}
-     */
-    @Test
-    void getBackRealUrl() {
-        when(urlUtil.checkIfUrlValid(TEST_URL)).thenReturn(true);
-        when(base64.decimalToBase64URL(anyInt())).thenReturn(TEST_CODE);
-        String code = base64Engine.processUrlToGetCode(TEST_URL);
-
-        String realUrl = base64Engine.getBackRealUrl(code.replace(TEST_LOCALHOST, ""));
-
-        assertEquals(TEST_URL, realUrl);
-    }
 }

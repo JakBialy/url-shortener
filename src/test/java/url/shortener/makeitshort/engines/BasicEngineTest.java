@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import url.shortener.makeitshort.engines.implementations.BasicEngine;
 import url.shortener.makeitshort.engines.utilities.UrlUtil;
 import url.shortener.makeitshort.repositories.UrlRepository;
 
@@ -51,18 +52,5 @@ class BasicEngineTest {
     void generateShorterUrl_whenUrlIsInvalid_ShouldReturnErrorMessage() {
         when(urlUtil.checkIfUrlValid(TEST_URL)).thenReturn(false);
         assertEquals(MESSAGE_URL_INVALID, basicEngine.processUrlToGetCode(TEST_URL));
-    }
-
-    /**
-     * {@link BasicEngine#getBackRealUrl(String)}
-     */
-    @Test
-    void getBackRealUrl() {
-        when(urlUtil.checkIfUrlValid(TEST_URL)).thenReturn(true);
-        String code = basicEngine.processUrlToGetCode(TEST_URL);
-
-        String realUrl = basicEngine.getBackRealUrl(code.replace(TEST_LOCALHOST, ""));
-
-        assertEquals(TEST_URL, realUrl);
     }
 }

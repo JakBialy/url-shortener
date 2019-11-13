@@ -16,8 +16,10 @@
 
                     <div>
                         <input class="form-control"  th:field="*{url}" id="text" type="text" name="text" placeholder="Your URL comes here">
-                        <!--            <p th:if="${#fields.hasErrors('text')}" th:errors="*{text}"> error message</p>-->
                     </div>
+
+                    <input type="radio" name="base64" th:field="*{typeOfEngine}" value="Base64Engine" /> Base64
+                    <input type="radio" name="basic" th:field="*{typeOfEngine}" value="BasicEngine" /> Basic
 
                     <div class="text-center">
                         <input type="submit" value="Convert it!" />

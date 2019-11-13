@@ -1,9 +1,10 @@
-package url.shortener.makeitshort.engines;
+package url.shortener.makeitshort.engines.implementations;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import url.shortener.makeitshort.engines.abstracts.AbstractEngine;
+import url.shortener.makeitshort.engines.interfaces.CodingEngine;
 import url.shortener.makeitshort.engines.utilities.Base64;
 import url.shortener.makeitshort.engines.utilities.UrlUtil;
 import url.shortener.makeitshort.models.Url;
@@ -16,12 +17,10 @@ import java.util.Random;
 public class Base64Engine extends AbstractEngine implements CodingEngine {
 
     private Base64 base64;
-    private UrlRepository urlRepository;
 
-    public Base64Engine(UrlUtil urlUtil, Base64 base64, UrlRepository urlRepository) {
-        super(urlUtil);
+    public Base64Engine(UrlUtil urlUtil, UrlRepository urlRepository, Base64 base64) {
+        super(urlUtil, urlRepository);
         this.base64 = base64;
-        this.urlRepository = urlRepository;
     }
 
     @Override
@@ -46,9 +45,4 @@ public class Base64Engine extends AbstractEngine implements CodingEngine {
         return base64String;
     }
 
-    @Override
-    public String getBackRealUrl(String codedUrl) {
-        log.info("getBackRealUrl: code - {} was used", codedUrl);
-        return urlRepository.getUrlByCode(codedUrl).getRealUrl();
-    }
 }

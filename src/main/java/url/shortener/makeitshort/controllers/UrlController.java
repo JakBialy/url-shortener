@@ -1,25 +1,26 @@
 package url.shortener.makeitshort.controllers;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import url.shortener.makeitshort.dtos.UrlDto;
-import url.shortener.makeitshort.engines.CodingEngine;
+import url.shortener.makeitshort.engines.implementations.CodingService;
+import url.shortener.makeitshort.engines.implementations.SearchEngine;
 
 @Controller
 public class UrlController {
+    private CodingService codingService;
+    private SearchEngine searchEngine;
 
-    private CodingEngine codingEngine;
-
-    public UrlController(@Qualifier("Base64Engine") CodingEngine codingEngine) {
-        this.codingEngine = codingEngine;
+    public UrlController(CodingService codingService, SearchEngine searchEngine) {
+        this.codingService = codingService;
+        this.searchEngine = searchEngine;
     }
 
     @PostMapping("/createUrl")
     public String putUrl(@ModelAttribute UrlDto urlDto, Model model) {
-        model.addAttribute("generatedUrl", codingEngine.processUrlToGetCode(urlDto.getUrl()));
+        model.addAttribute("generatedUrl", codingService.processUrlToGetCode(urlDto.getUrl(), urlDto.getTypeOfEngine()));
         return "GeneratedUrlPage";
     }
 
@@ -31,7 +32,7 @@ public class UrlController {
 
     @GetMapping("/{code}")
     public ModelAndView getRealUrl(@PathVariable String code) {
-        return new ModelAndView("redirect:" + codingEngine.getBackRealUrl(code));
+        return new ModelAndView("redirect:" + searchEngine.getBackRealUrl(code));
     }
 
 }
