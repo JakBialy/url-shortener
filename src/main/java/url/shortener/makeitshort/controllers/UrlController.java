@@ -8,6 +8,8 @@ import url.shortener.makeitshort.dtos.UrlDto;
 import url.shortener.makeitshort.engines.implementations.CodingService;
 import url.shortener.makeitshort.engines.implementations.SearchEngine;
 
+import javax.validation.constraints.NotBlank;
+
 @Controller
 public class UrlController {
     private CodingService codingService;
@@ -31,8 +33,16 @@ public class UrlController {
     }
 
     @GetMapping("/{code}")
-    public ModelAndView getRealUrl(@PathVariable String code) {
+    public ModelAndView getRealUrl(@PathVariable("code") @NotBlank String code) {
         return new ModelAndView("redirect:" + searchEngine.getBackRealUrl(code));
+    }
+
+    /**
+     * Disabling favicon.ico calls
+     */
+    @GetMapping("favicon.ico")
+    @ResponseBody
+    void returnNoFavicon() {
     }
 
 }
