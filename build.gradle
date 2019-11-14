@@ -57,7 +57,7 @@ task loadTest(type: JavaExec) {
     ]
     main = "io.gatling.app.Gatling"
     args = [
-            "--simulation", "pl.piomin.services.gatling.ApiGatlingSimulationTest",
+            "--simulation", "url.shortener.makeitshort.ApiGatlingSimulationTest",
             "--results-folder", "${buildDir}/gatling-results",
             "--binaries-folder", sourceSets.test.output.getClassesDirs().toString(),
             "--bodies-folder", sourceSets.test.resources.srcDirs.toList().first().toString() + "/gatling/bodies",
